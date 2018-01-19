@@ -20,6 +20,6 @@ with sf.Graph().as_default():
 
 - [x] Computational Graph
 - [x] Feed forward propagation
-- [] Backpropagation
-- [] GradientDescent Optimizer
+- [ ] Backpropagation
+- [ ] GradientDescent Optimizer
 
