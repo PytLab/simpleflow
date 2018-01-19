@@ -1,7 +1,7 @@
 # SimpleFlow
 A simple TensorFlow-like graph computation framework in Python for learning purpose
 
-# Example
+## Example
 ``` python
 import simpleflow as sf
 
@@ -16,7 +16,7 @@ with sf.Graph().as_default():
         print(sess.run(result))
 ```
 
-# TODO List
+## TODO List
 
 - [x] Computational Graph
 - [x] Feed forward propagation
