@@ -22,12 +22,16 @@ class Operation(object):
         '''
         # Nodes received by this operation.
         self.input_nodes = input_nodes
+
         # Nodes that receive this operation node as input.
         self.output_nodes = []
+
         # Output value of this operation in session execution.
         self.output_value = None
+
         # Operation name.
         self.name = name
+
         # Graph the operation belongs to.
         self.graph = DEFAULT_GRAPH
 
@@ -148,12 +152,16 @@ class Variable(object):
         '''
         # Variable initial value.
         self.initial_value = initial_value
+
         # Output value of this operation in session execution.
         self.output_value = None
+
         # Nodes that receive this variable node as input.
         self.output_nodes = []
+
         # Variable name.
         self.name = name
+
         # Graph the variable belongs to.
         self.graph = DEFAULT_GRAPH
 
@@ -177,10 +185,13 @@ class Placeholder(object):
         '''
         # Output value of this operation in session execution.
         self.output_value = None
+
         # Nodes that receive this placeholder node as input.
         self.output_nodes = []
+
         # Placeholder node name.
         self.name = name
+
         # Graph the placeholder node belongs to.
         self.graph = DEFAULT_GRAPH
 
