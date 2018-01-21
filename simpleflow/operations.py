@@ -47,6 +47,9 @@ class Operation(object):
         '''
         raise NotImplementedError
 
+# ------------------------------------------------------------------------------
+# Addition operation
+# ------------------------------------------------------------------------------
 
 class Add(Operation):
     ''' An addition operation.
@@ -77,6 +80,9 @@ def add(x, y, name=None):
     '''
     return Add(x, y, name)
 
+# ------------------------------------------------------------------------------
+# Multiplication operation
+# ------------------------------------------------------------------------------
 
 class Multiply(Operation):
     ''' Multiplication operation.
@@ -107,6 +113,9 @@ def multiply(x, y, name=None):
     '''
     return Multiply(x, y, name)
 
+# ------------------------------------------------------------------------------
+# Matrix multiplication operation
+# ------------------------------------------------------------------------------
 
 class MatMul(Operation):
     ''' Matrix multiplication operation.
@@ -137,6 +146,41 @@ def matmul(x, y, name=None):
     '''
     return MatMul(x, y, name)
 
+# ------------------------------------------------------------------------------
+# Constant node
+# ------------------------------------------------------------------------------
+
+class Constant(object):
+    ''' Constant node in computational graph.
+    '''
+    def __init__(self, value, name=None):
+        ''' Cosntant constructor.
+        '''
+        # Constant value.
+        self.value = value
+
+        # Output value of this operation in session.
+        self.output_value = None
+
+        # Nodes that receive this variable node as input.
+        self.output_nodes = []
+
+        # Operation name.
+        self.name = name
+
+        # Add to graph.
+        DEFAULT_GRAPH.constants.append(self)
+
+    def compute(self):
+        ''' Compute and return the constant value.
+        '''
+        if self.output_value is None:
+            self.output_value = self.value
+        return self.output_value
+
+# ------------------------------------------------------------------------------
+# Variable node
+# ------------------------------------------------------------------------------
 
 class Variable(object):
     ''' Variable node in computational graph.
@@ -177,6 +221,14 @@ class Variable(object):
             self.output_value = self.initial_value
         return self.output_value
 
+def constant(value, name=None):
+    ''' Create a constant node.
+    '''
+    return Constant(value, name=name)
+
+# ------------------------------------------------------------------------------
+# Placeholder node
+# ------------------------------------------------------------------------------
 
 class Placeholder(object):
     ''' Placeholder node in computational graph. It has to be provided a value when

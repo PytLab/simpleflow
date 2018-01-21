@@ -9,8 +9,8 @@ class Graph(object):
     def __init__(self):
         ''' Graph constructor.
         '''
-        self.operations, self.variables, self.placeholders = [], [], []
-        self.trainable_variables = []
+        self.operations, self.constants, self.placeholders = [], [], []
+        self.variables, self.trainable_variables = [], []
 
     def __enter__(self):
         ''' Reset default graph.

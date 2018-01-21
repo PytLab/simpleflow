@@ -7,8 +7,8 @@ import simpleflow as sf
 
 # Create a graph
 with sf.Graph().as_default():
-    a = sf.Variable(1.0, name='a')
-    b = sf.Variable(2.0, name='b')
+    a = sf.constant(1.0, name='a')
+    b = sf.constant(2.0, name='b')
     result = sf.add(a, b, name='a+b')
 
     # Create a session to run the graph 
