@@ -7,5 +7,5 @@ from .session import *
 
 # Create a default graph.
 import builtins
-builtins.DEFAULT_GRAPH = Graph()
+DEFAULT_GRAPH = builtins.DEFAULT_GRAPH = Graph()
 
