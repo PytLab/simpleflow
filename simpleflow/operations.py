@@ -91,7 +91,7 @@ class Add(Operation):
 
         # For scalar input.
         if grad is None:
-            grad = 1.0 if np.shape(x) == () else np.full(x.shape, 1.0)
+            grad = np.full(x.shape, 1.0)
 
         return [1.0*grad, 1.0*grad]
 
@@ -177,7 +177,10 @@ class Constant(object):
         ''' Cosntant constructor.
         '''
         # Constant value.
-        self.value = value
+        if np.shape(value):
+            self.value = np.array(value)
+        else:
+            self.value = np.array([value])
 
         # Output value of this operation in session.
         self.output_value = None
@@ -197,6 +200,11 @@ class Constant(object):
         if self.output_value is None:
             self.output_value = self.value
         return self.output_value
+
+def constant(value, name=None):
+    ''' Create a constant node.
+    '''
+    return Constant(value, name=name)
 
 # ------------------------------------------------------------------------------
 # Variable node
@@ -243,11 +251,6 @@ class Variable(object):
         if self.output_value is None:
             self.output_value = self.initial_value
         return self.output_value
-
-def constant(value, name=None):
-    ''' Create a constant node.
-    '''
-    return Constant(value, name=name)
 
 # ------------------------------------------------------------------------------
 # Placeholder node
