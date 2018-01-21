@@ -10,6 +10,7 @@ class Graph(object):
         ''' Graph constructor.
         '''
         self.operations, self.variables, self.placeholders = [], [], []
+        self.trainable_variables = []
 
     def __enter__(self):
         ''' Reset default graph.

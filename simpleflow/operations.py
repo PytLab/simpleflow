@@ -141,7 +141,7 @@ def matmul(x, y, name=None):
 class Variable(object):
     ''' Variable node in computational graph.
     '''
-    def __init__(self, initial_value=None, name=None): 
+    def __init__(self, initial_value=None, name=None, trainable=True): 
         ''' Variable constructor.
 
         :param initial_value: The initial value of the variable.
@@ -167,6 +167,8 @@ class Variable(object):
 
         # Add to the currently active default graph.
         self.graph.variables.append(self)
+        if trainable:
+            self.graph.trainable_variables.append(self)
 
     def compute(self):
         ''' Compute and return the variable value.
