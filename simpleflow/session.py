@@ -53,7 +53,10 @@ class Session(object):
             else:  # Operation
                 node.output_value = node.compute_output()
 
-        return operation.output_value
+        if operation.output_value.shape == (1, ):
+            return operation.output_value[0]
+        else:
+            return operation.output_value
 
 def _get_prerequisite(operation):
     ''' Perform a post-order traversal to get a list of nodes to be computed in order.

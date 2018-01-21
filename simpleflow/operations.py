@@ -47,7 +47,7 @@ class Operation(object):
         '''
         raise NotImplementedError
 
-    def compute_output(self, grad=1):
+    def compute_gradient(self, grad=1):
         ''' Compute and return the gradient of the operation wrt inputs.
         '''
         raise NotImplementedError
@@ -80,11 +80,20 @@ class Add(Operation):
         self.output_value = np.add(x.output_value, y.output_value)
         return self.output_value
 
-    def compute_gradient(self, grad=1):
+    def compute_gradient(self, grad=None):
         ''' Compute the gradients for this operation wrt input values.
 
-        :param grad: The gradient wrt the addition output.
+        :param grad: The gradient of other operation wrt the addition output.
+        :type grad: number or a ndarray, default value is 1.0.
         '''
+        # Input values for x and y.
+        x, y = [node.output_value for node in self.input_nodes]
+
+        # For scalar input.
+        if grad is None:
+            grad = 1.0 if np.shape(x) == () else np.full(x.shape, 1.0)
+
+        return [1.0*grad, 1.0*grad]
 
 def add(x, y, name=None):
     ''' Returns x + y element-wise.
@@ -206,7 +215,10 @@ class Variable(object):
         :type name: str.
         '''
         # Variable initial value.
-        self.initial_value = initial_value
+        if np.shape(initial_value):
+            self.initial_value = np.array(initial_value)
+        else:
+            self.initial_value = np.array([initial_value])
 
         # Output value of this operation in session execution.
         self.output_value = None
