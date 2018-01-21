@@ -27,12 +27,11 @@ class Session(object):
     def close(self):
         ''' Free all output values in nodes.
         '''
-        for var in self.graph.variables:
-            var.output_value = None
-        for ph in self.graph.placeholders:
-            ph.output_value = None
-        for op in self.graph.operations:
-            op.output_value = None
+        all_nodes = (self.graph.constants + self.graph.variables +
+                     self.graph.placeholders + self.graph.operations +
+                     self.graph.trainable_variables)
+        for node in all_nodes:
+            node.output_value = None
 
     def run(self, operation, feed_dict=None):
         ''' Compute the output of an operation.
@@ -52,7 +51,7 @@ class Session(object):
             elif type(node) is Placeholder:
                 node.output_value = feed_dict[node]
             else:  # Operation
-                node.output_value = node.compute()
+                node.output_value = node.compute_output()
 
         return operation.output_value
 

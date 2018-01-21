@@ -42,8 +42,13 @@ class Operation(object):
         # Add this operation to default graph.
         self.graph.operations.append(self)
 
-    def compute(self):
+    def compute_output(self):
         ''' Compute and return the output value of the operation.
+        '''
+        raise NotImplementedError
+
+    def compute_output(self, grad=1):
+        ''' Compute and return the gradient of the operation wrt inputs.
         '''
         raise NotImplementedError
 
@@ -68,12 +73,18 @@ class Add(Operation):
         '''
         super(self.__class__, self).__init__(x, y, name=name)
 
-    def compute(self):
+    def compute_output(self):
         ''' Compute and return the value of addition operation.
         '''
         x, y = self.input_nodes
         self.output_value = np.add(x.output_value, y.output_value)
         return self.output_value
+
+    def compute_gradient(self, grad=1):
+        ''' Compute the gradients for this operation wrt input values.
+
+        :param grad: The gradient wrt the addition output.
+        '''
 
 def add(x, y, name=None):
     ''' Returns x + y element-wise.
@@ -101,7 +112,7 @@ class Multiply(Operation):
         '''
         super(self.__class__, self).__init__(x, y, name=name)
 
-    def compute(self):
+    def compute_output(self):
         ''' Compute and return the multiplication operation result.
         '''
         x, y = self.input_nodes
@@ -134,7 +145,7 @@ class MatMul(Operation):
         '''
         super(self.__class__, self).__init__(x, y, name=name)
 
-    def compute(self):
+    def compute_output(self):
         ''' Compute and return the multiplication operation result.
         '''
         x, y = self.input_nodes
@@ -171,7 +182,7 @@ class Constant(object):
         # Add to graph.
         DEFAULT_GRAPH.constants.append(self)
 
-    def compute(self):
+    def compute_output(self):
         ''' Compute and return the constant value.
         '''
         if self.output_value is None:
@@ -214,7 +225,7 @@ class Variable(object):
         if trainable:
             self.graph.trainable_variables.append(self)
 
-    def compute(self):
+    def compute_output(self):
         ''' Compute and return the variable value.
         '''
         if self.output_value is None:
