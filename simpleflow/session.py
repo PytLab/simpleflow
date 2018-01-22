@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 ''' Session to execute a computational graph.
 '''
+from functools import reduce
 
 from .operations import Operation, Variable, Placeholder
 
@@ -53,8 +54,8 @@ class Session(object):
             else:  # Operation
                 node.output_value = node.compute_output()
 
-        if operation.output_value.shape == (1, ):
-            return operation.output_value[0]
+        if reduce(lambda x, y: x*y, operation.output_value.shape) == 1:
+            return operation.output_value.reshape(-1)[0]
         else:
             return operation.output_value
 

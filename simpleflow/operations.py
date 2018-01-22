@@ -47,7 +47,7 @@ class Operation(object):
         '''
         raise NotImplementedError
 
-    def compute_gradient(self, grad=1):
+    def compute_gradient(self, grad=None):
         ''' Compute and return the gradient of the operation wrt inputs.
         '''
         raise NotImplementedError
@@ -86,12 +86,12 @@ class Add(Operation):
         :param grad: The gradient of other operation wrt the addition output.
         :type grad: number or a ndarray, default value is 1.0.
         '''
-        # Input values for x and y.
         x, y = [node.output_value for node in self.input_nodes]
+        if x.shape != y.shape:
+            raise ValueError('Input shapes must be equal for add operation')
 
-        # For scalar input.
         if grad is None:
-            grad = np.full(x.shape, 1.0)
+            grad = np.ones_like(self.output_value)
 
         return [1.0*grad, 1.0*grad]
 
@@ -128,6 +128,21 @@ class Multiply(Operation):
         self.output_value = np.multiply(x.output_value, y.output_value)
         return self.output_value
 
+    def compute_gradient(self, grad=None):
+        ''' Compute and return gradients for this operation wrt input values.
+
+        :param grad: The gradient of other operation wrt the mutiply output.
+        :type grad: number or a ndarray.
+        '''
+        x, y = [node.output_value for node in self.input_nodes]
+        if x.shape != y.shape:
+            raise ValueError('Input shapes must be equal for multiplication operation')
+
+        if grad is None:
+            grad = np.ones_like(self.output_value)
+
+        return [np.multiply(y, grad), np.multiply(x, grad)]
+
 def multiply(x, y, name=None):
     ''' Returns x * y element-wise.
     '''
@@ -160,6 +175,25 @@ class MatMul(Operation):
         x, y = self.input_nodes
         self.output_value = np.dot(x.output_value, y.output_value)
         return self.output_value
+
+    def compute_gradient(self, grad=None):
+        ''' Compute and return the gradient for matrix multiplication.
+
+        :param grad: The gradient of other operation wrt the matmul output.
+        :type grad: number or a ndarray, default value is 1.0.
+        '''
+        # Get input values.
+        x, y = [node.output_value for node in self.input_nodes]
+
+        # Default gradient wrt the matmul output.
+        if grad is None:
+            grad = np.ones_like(self.output_value)
+
+        # Gradients wrt inputs.
+        dfdx = np.dot(grad, y.T)
+        dfdy = np.dot(x.T, grad)
+
+        return [dfdx, dfdy]
 
 def matmul(x, y, name=None):
     ''' Multiplies matrix `a` by matrix `b`, producing `a` * `b`.
