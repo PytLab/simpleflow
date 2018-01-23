@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 ''' Optimizer classes for parameters optimization.
 '''
-from .operation import Operation, compute_gradients
+from .operations import Operation, compute_gradients
 
 class GradientDescentOptimizer(object):
     ''' Optimizer that implements the gradient descent algorithm.

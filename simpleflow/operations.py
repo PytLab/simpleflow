@@ -202,6 +202,9 @@ def matmul(x, y, name=None):
     '''
     return MatMul(x, y, name)
 
+# ------------------------------------------------------------------------------
+# Sigmoid operation
+# ------------------------------------------------------------------------------
 
 class Sigmoid(Operation):
     ''' Sigmoid operation.
@@ -233,6 +236,86 @@ class Sigmoid(Operation):
         if grad is None:
             grad = np.ones_like(self.output_value)
         return grad*self.output_valuea*(1 - self.output_value)
+
+def sigmoid(x, name=None):
+    ''' Computes sigmoid of `x` element-wise.
+    '''
+    return Sigmoid(x, name=name)
+
+# ------------------------------------------------------------------------------
+# Logarithm operation
+# ------------------------------------------------------------------------------
+
+class Log(Operation):
+    ''' Natural logarithm operation.
+    '''
+    def __init__(self, x, name=None):
+        ''' Logarithm constructor.
+
+        :param x: The input node.
+        :type x: Object of `Operation`, `Variable` or `Placeholder`.
+
+        :param name: The operation name.
+        :type name: str.
+        '''
+        super(self.__class__, self).__init__(x, name=name)
+
+    def compute_output(self):
+        ''' Compute and return the value of sigmoid function.
+        '''
+        x, = self.input_nodes
+        self.output_value = np.log(x)
+        return self.output_value
+
+    def compute_gradient(self, grad=None):
+        ''' Compute the gradient for natural logarithm operation wrt input value.
+
+        :param grad: The gradient of other operation wrt the logarithm output.
+        :type grad: ndarray.
+        '''
+        if grad is None:
+            grad = np.ones_like(self.output_value)
+        return grad*1/x
+
+def log(x, name=None):
+    ''' Computes the natural logarithm of x element-wise.
+    '''
+    return Log(x, name=name)
+
+# ------------------------------------------------------------------------------
+# Negative operation
+# ------------------------------------------------------------------------------
+
+class Negative(Operation):
+    ''' Negative operation.
+    '''
+    def __init__(self, x, name=None):
+        ''' Operation constructor.
+
+        :param x: The input node.
+        :type x: Object of `Operation`, `Variable` or `Placeholder`.
+
+        :param name: The operation name.
+        :type name: str.
+        '''
+        super(self.__class__, self).__init__(x, name=name)
+
+    def compute_output(self):
+        ''' Compute and return the value of sigmoid function.
+        '''
+        x, = self.input_nodes
+        self.output_value = -x
+        return self.output_value
+
+    def compute_gradient(self, grad=None):
+        ''' Compute the gradient for negative operation wrt input value.
+
+        :param grad: The gradient of other operation wrt the negative output.
+        :type grad: ndarray.
+        '''
+        if grad is None:
+            grad = np.ones_like(self.output_value)
+        return -grad
 
 # ------------------------------------------------------------------------------
 # Constant node
