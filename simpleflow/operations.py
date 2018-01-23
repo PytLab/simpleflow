@@ -202,6 +202,38 @@ def matmul(x, y, name=None):
     '''
     return MatMul(x, y, name)
 
+
+class Sigmoid(Operation):
+    ''' Sigmoid operation.
+    '''
+    def __init__(self, x, name=None):
+        ''' Sigmoid operation constructor.
+
+        :param x: The input node.
+        :type x: Object of `Operation`, `Variable` or `Placeholder`.
+
+        :param name: The operation name.
+        :type name: str.
+        '''
+        super(self.__class__, self).__init__(x, name=name)
+
+    def compute_output(self):
+        ''' Compute and return the value of sigmoid function.
+        '''
+        x, = self.input_nodes
+        self.output_value = 1/(1 + np.exp(-x.output_value))
+        return self.output_value
+
+    def compute_gradient(self, grad=None):
+        ''' Compute the gradient for sigmoid operation wrt input value.
+
+        :param grad: The gradient of other operation wrt the sigmoid output.
+        :type grad: ndarray.
+        '''
+        if grad is None:
+            grad = np.ones_like(self.output_value)
+        return grad*self.output_valuea*(1 - self.output_value)
+
 # ------------------------------------------------------------------------------
 # Constant node
 # ------------------------------------------------------------------------------
@@ -372,4 +404,5 @@ def compute_gradients(target_op):
                     queue.put(input_node)
 
     return grad_table
+
 
