@@ -4,6 +4,7 @@
 from .graph import *
 from .operations import *
 from .session import *
+from .train import *
 
 # Create a default graph.
 import builtins
