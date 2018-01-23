@@ -54,10 +54,7 @@ class Session(object):
             else:  # Operation
                 node.output_value = node.compute_output()
 
-        if reduce(lambda x, y: x*y, operation.output_value.shape) == 1:
-            return operation.output_value.reshape(-1)[0]
-        else:
-            return operation.output_value
+        return operation.output_value
 
 def _get_prerequisite(operation):
     ''' Perform a post-order traversal to get a list of nodes to be computed in order.

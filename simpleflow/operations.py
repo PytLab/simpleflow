@@ -289,7 +289,7 @@ class Log(Operation):
         ''' Compute and return the value of sigmoid function.
         '''
         x, = self.input_nodes
-        self.output_value = np.log(x)
+        self.output_value = np.log(x.output_value)
         return self.output_value
 
     def compute_gradient(self, grad=None):
@@ -329,7 +329,7 @@ class Negative(Operation):
         ''' Compute and return the value of sigmoid function.
         '''
         x, = self.input_nodes
-        self.output_value = -x
+        self.output_value = -x.output_value
         return self.output_value
 
     def compute_gradient(self, grad=None):
@@ -343,6 +343,54 @@ class Negative(Operation):
         return -grad
 
 # ------------------------------------------------------------------------------
+# Reduce sum operation
+# ------------------------------------------------------------------------------
+
+class ReduceSum(Operation):
+    ''' Reduce sum operation.
+    '''
+    def __init__(self, x, axis=None):
+        ''' Operation constructor.
+
+        :param x: The input node.
+        :type x: Object of `Operation`, `Variable` or `Placeholder`.
+
+        :param axis: The dimensions to reduce. If `None`, reduces all dimensions.
+        :type axis: int.
+        '''
+        super(self.__class__, self).__init__(x)
+        self.axis = axis
+
+    def compute_output(self):
+        ''' Compute and return the value of sigmoid function.
+        '''
+        x, = self.input_nodes
+        self.output_value = np.sum(x.output_value, self.axis)
+        return self.output_value
+
+    def compute_gradient(self, grad=None):
+        ''' Compute the gradient for negative operation wrt input value.
+
+        :param grad: The gradient of other operation wrt the negative output.
+        :type grad: ndarray.
+        '''
+        input_value = self.input_nodes[0].output_value
+
+        if grad is None:
+            grad = np.ones_like(self.output_value)
+
+        output_shape = np.array(np.shape(input_value))
+        output_shape[self.axis] = 1.0
+        tile_scaling = np.shape(input_value) // output_shape
+        grad = np.reshape(grad, output_shape)
+        return np.tile(grad, tile_scaling)
+
+def reduce_sum(x, axis=None):
+    ''' Computes the sum of elements across dimensions of a tensor.
+    '''
+    return ReduceSum(x, axis=axis)
+
+# ------------------------------------------------------------------------------
 # Constant node
 # ------------------------------------------------------------------------------
 
@@ -353,10 +401,7 @@ class Constant(object):
         ''' Cosntant constructor.
         '''
         # Constant value.
-        if np.shape(value):
-            self.value = np.array(value)
-        else:
-            self.value = np.array([value])
+        self.value = value
 
         # Output value of this operation in session.
         self.output_value = None
@@ -411,10 +456,7 @@ class Variable(object):
         :type name: str.
         '''
         # Variable initial value.
-        if np.shape(initial_value):
-            self.initial_value = np.array(initial_value)
-        else:
-            self.initial_value = np.array([initial_value])
+        self.initial_value = initial_value
 
         # Output value of this operation in session execution.
         self.output_value = None
