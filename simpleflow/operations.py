@@ -54,6 +54,18 @@ class Operation(object):
         '''
         raise NotImplementedError
 
+    def __add__(self, other):
+        return Add(self, other)
+
+    def __neg__(self):
+        return Negative(self)
+
+    def __sub__(self, other):
+        return Add(self, Negative(other))
+
+    def __mul__(self, other):
+        return Multiply(self, other)
+
 # ------------------------------------------------------------------------------
 # Addition operation
 # ------------------------------------------------------------------------------
@@ -352,6 +364,18 @@ class Constant(object):
             self.output_value = self.value
         return self.output_value
 
+    def __add__(self, other):
+        return Add(self, other)
+
+    def __neg__(self):
+        return Negative(self)
+
+    def __sub__(self, other):
+        return Add(self, Negative(other))
+
+    def __mul__(self, other):
+        return Multiply(self, other)
+
 def constant(value, name=None):
     ''' Create a constant node.
     '''
@@ -403,6 +427,18 @@ class Variable(object):
             self.output_value = self.initial_value
         return self.output_value
 
+    def __add__(self, other):
+        return Add(self, other)
+
+    def __neg__(self):
+        return Negative(self)
+
+    def __sub__(self, other):
+        return Add(self, Negative(other))
+
+    def __mul__(self, other):
+        return Multiply(self, other)
+
 # ------------------------------------------------------------------------------
 # Placeholder node
 # ------------------------------------------------------------------------------
@@ -429,6 +465,17 @@ class Placeholder(object):
         # Add to the currently active default graph.
         self.graph.placeholders.append(self)
 
+    def __add__(self, other):
+        return Add(self, other)
+
+    def __neg__(self):
+        return Negative(self)
+
+    def __sub__(self, other):
+        return Add(self, Negative(other))
+
+    def __mul__(self, other):
+        return Multiply(self, other)
 
 # ------------------------------------------------------------------------------
 # Function for gradients computation.
