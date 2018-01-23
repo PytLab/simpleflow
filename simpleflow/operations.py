@@ -101,13 +101,26 @@ class Add(Operation):
         :type grad: number or a ndarray, default value is 1.0.
         '''
         x, y = [node.output_value for node in self.input_nodes]
-        if x.shape != y.shape:
-            raise ValueError('Input shapes must be equal for add operation')
 
         if grad is None:
             grad = np.ones_like(self.output_value)
 
-        return [1.0*grad, 1.0*grad]
+        m, n = self.output_value.shape
+
+        if np.ndim(grad) > np.ndim(x):
+            dLdx = np.dot(grad, np.ones_like(grad).T)
+            # Reshape
+            grad_wrt_x = np.dot(np.dot(np.ones(m), dLdx), np.ones((m, 1)))
+        else:
+            grad_wrt_x = grad
+
+        if np.ndim(grad) > np.ndim(y):
+            dLdy = np.dot(grad, np.ones_like(grad).T)
+            grad_wrt_y = np.dot(np.dot(np.ones(m), dLdy), np.ones((m, 1)))
+        else:
+            grad_wrt_y = grad
+
+        return [grad_wrt_x, grad_wrt_y]
 
 def add(x, y, name=None):
     ''' Returns x + y element-wise.
