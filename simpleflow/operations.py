@@ -389,6 +389,49 @@ def reduce_sum(x, axis=None):
     return ReduceSum(x, axis=axis)
 
 # ------------------------------------------------------------------------------
+# Square operation
+# ------------------------------------------------------------------------------
+
+class Square(Operation):
+    ''' Square operation.
+    '''
+    def __init__(self, x, name=None):
+        ''' Operation constructor.
+
+        :param x: The input node.
+        :type x: Object of `Operation`, `Variable` or `Placeholder`.
+
+        :param name: The name of the operation.
+        :type name: str.
+        '''
+        super(self.__class__, self).__init__(x, name=name)
+
+    def compute_output(self):
+        ''' Compute and return the value of square function.
+        '''
+        x, = self.input_nodes
+        self.output_value = np.square(x.output_value)
+        return self.output_value
+
+    def compute_gradient(self, grad=None):
+        ''' Compute the gradient for square operation wrt input value.
+
+        :param grad: The gradient of other operation wrt the square output.
+        :type grad: ndarray.
+        '''
+        input_value = self.input_nodes[0].output_value
+
+        if grad is None:
+            grad = np.ones_like(self.output_value)
+
+        return grad*np.multiply(2.0, input_value)
+
+def square(x, name=None):
+    ''' Computes square of x element-wise.
+    '''
+    return Square(x, name=name)
+
+# ------------------------------------------------------------------------------
 # Constant node
 # ------------------------------------------------------------------------------
 
