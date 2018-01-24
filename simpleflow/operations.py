@@ -165,7 +165,21 @@ class Multiply(Operation):
         if grad is None:
             grad = np.ones_like(self.output_value)
 
-        return [np.multiply(y, grad), np.multiply(x, grad)]
+        grad_wrt_x = grad*y
+        while np.ndim(grad_wrt_x) > len(np.shape(x)):
+            grad_wrt_x = np.sum(grad_wrt_x, axis=0)
+        for axis, size in enumerate(np.shape(x)):
+            if size == 1:
+                grad_wrt_x = np.sum(grad_wrt_x, axis=axis, keepdims=True)
+
+        grad_wrt_y = grad*x
+        while np.ndim(grad_wrt_y) > len(np.shape(y)):
+            grad_wrt_y = np.sum(grad_wrt_y, axis=0)
+        for axis, size in enumerate(np.shape(y)):
+            if size == 1:
+                grad_wrt_y = np.sum(grad_wrt_y, axis=axis, keepdims=True)
+
+        return [grad_wrt_x, grad_wrt_y]
 
 def multiply(x, y, name=None):
     ''' Returns x * y element-wise.
