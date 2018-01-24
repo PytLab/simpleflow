@@ -105,20 +105,19 @@ class Add(Operation):
         if grad is None:
             grad = np.ones_like(self.output_value)
 
-        m, n = self.output_value.shape
+        grad_wrt_x = grad
+        while np.ndim(grad_wrt_x) > len(np.shape(x)):
+            grad_wrt_x = np.sum(grad_wrt_x, axis=0)
+        for axis, size in enumerate(np.shape(x)):
+            if size == 1:
+                grad_wrt_x = np.sum(grad_wrt_x, axis=axis, keepdims=True)
 
-        if np.ndim(grad) > np.ndim(x):
-            dLdx = np.dot(grad, np.ones_like(grad).T)
-            # Reshape
-            grad_wrt_x = np.dot(np.dot(np.ones(m), dLdx), np.ones((m, 1)))
-        else:
-            grad_wrt_x = grad
-
-        if np.ndim(grad) > np.ndim(y):
-            dLdy = np.dot(grad, np.ones_like(grad).T)
-            grad_wrt_y = np.dot(np.dot(np.ones(m), dLdy), np.ones((m, 1)))
-        else:
-            grad_wrt_y = grad
+        grad_wrt_y = grad
+        while np.ndim(grad_wrt_y) > len(np.shape(y)):
+            grad_wrt_y = np.sum(grad_wrt_y, axis=0)
+        for axis, size in enumerate(np.shape(y)):
+            if size == 1:
+                grad_wrt_y = np.sum(grad_wrt_y, axis=axis, keepdims=True)
 
         return [grad_wrt_x, grad_wrt_y]
 
@@ -162,8 +161,6 @@ class Multiply(Operation):
         :type grad: number or a ndarray.
         '''
         x, y = [node.output_value for node in self.input_nodes]
-        if x.shape != y.shape:
-            raise ValueError('Input shapes must be equal for multiplication operation')
 
         if grad is None:
             grad = np.ones_like(self.output_value)
@@ -217,8 +214,8 @@ class MatMul(Operation):
             grad = np.ones_like(self.output_value)
 
         # Gradients wrt inputs.
-        dfdx = np.dot(grad, y.T)
-        dfdy = np.dot(x.T, grad)
+        dfdx = np.dot(grad, np.transpose(y))
+        dfdy = np.dot(np.transpose(x), grad)
 
         return [dfdx, dfdy]
 
@@ -260,7 +257,7 @@ class Sigmoid(Operation):
         '''
         if grad is None:
             grad = np.ones_like(self.output_value)
-        return grad*self.output_valuea*(1 - self.output_value)
+        return grad*self.output_value*(1 - self.output_value)
 
 def sigmoid(x, name=None):
     ''' Computes sigmoid of `x` element-wise.
@@ -298,6 +295,7 @@ class Log(Operation):
         :param grad: The gradient of other operation wrt the logarithm output.
         :type grad: ndarray.
         '''
+        x = self.input_nodes[0].output_value
         if grad is None:
             grad = np.ones_like(self.output_value)
         return grad*1/x
@@ -574,8 +572,11 @@ def compute_gradients(target_op):
                 grad_wrt_output_node_output = grad_table[output_node]
                 # Compute the gradient wrt current node's output.
                 grad_wrt_node_output = output_node.compute_gradient(grad_wrt_output_node_output)
-                input_node_index = output_node.input_nodes.index(node)
-                grads_wrt_node_output.append(grad_wrt_node_output[input_node_index])
+                if len(output_node.input_nodes) > 1:
+                    input_node_index = output_node.input_nodes.index(node)
+                    grads_wrt_node_output.append(grad_wrt_node_output[input_node_index])
+                else:
+                    grads_wrt_node_output.append(grad_wrt_node_output)
 
             # Sum all gradients wrt node's output.
             tot_grad_wrt_node_output = sum(grads_wrt_node_output)

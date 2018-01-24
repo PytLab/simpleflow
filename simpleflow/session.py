@@ -47,12 +47,10 @@ class Session(object):
         postorder_nodes = _get_prerequisite(operation)
 
         for node in postorder_nodes:
-            if type(node) is Variable:
-                node.output_value = node.initial_value
-            elif type(node) is Placeholder:
+            if type(node) is Placeholder:
                 node.output_value = feed_dict[node]
-            else:  # Operation
-                node.output_value = node.compute_output()
+            else:  # Operation and variable
+                node.compute_output()
 
         return operation.output_value
 
