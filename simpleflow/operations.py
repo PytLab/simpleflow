@@ -530,6 +530,11 @@ class Placeholder(object):
     def __mul__(self, other):
         return Multiply(self, other)
 
+def placeholder(name=None):
+    ''' Inserts a placeholder for a node that will be always fed.
+    '''
+    return Placeholder(name=name)
+
 # ------------------------------------------------------------------------------
 # Function for gradients computation.
 # ------------------------------------------------------------------------------
