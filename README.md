@@ -1,7 +1,7 @@
 ## *SimpleFlow*
 A simple TensorFlow-like graph computation framework in Python for learning purpose
 
-### Example
+### Quick Start
 ``` python
 import simpleflow as sf
 
@@ -16,10 +16,16 @@ with sf.Graph().as_default():
         print(sess.run(result))
 ```
 
+### Examples
+- [Feedforward example](https://github.com/PytLab/simpleflow/blob/master/exmaples/feedforward.ipynb)
+- [Linear Regression](https://github.com/PytLab/simpleflow/blob/master/exmaples/linear_regression.ipynb)
+
 ### Features
 
 - [x] Computational Graph
 - [x] Feed forward propagation
-- [ ] Backpropagation
-- [ ] GradientDescent Optimizer
+- [x] Backpropagation
+- [x] GradientDescent Optimizer
+- [x] Linear Regression
+- [ ] MNIST classification
 
