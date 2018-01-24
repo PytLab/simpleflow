@@ -17,7 +17,7 @@ with sf.Graph().as_default():
 ```
 
 ### Examples
-- [Feedforward example](https://github.com/PytLab/simpleflow/blob/master/exmaples/feedforward.ipynb)
+- [Feedforward](https://github.com/PytLab/simpleflow/blob/master/exmaples/feedforward.ipynb)
 - [Linear Regression](https://github.com/PytLab/simpleflow/blob/master/exmaples/linear_regression.ipynb)
 
 ### Features
@@ -26,6 +26,6 @@ with sf.Graph().as_default():
 - [x] Feed forward propagation
 - [x] Backpropagation
 - [x] GradientDescent Optimizer
-- [x] Linear Regression
-- [ ] MNIST classification
+- [x] Linear Regression Example
+- [ ] MNIST classification Example
 
